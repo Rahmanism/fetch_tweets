@@ -1,3 +1,6 @@
+# use the following line after first commit and before adding 
+# real secret tokens to the gettweets_secret_keys.py
+# git update-index --assume-unchanged gettweets_secret_keys.py
 gettweets_secret_keys.py
 
 # Byte-compiled / optimized / DLL files
