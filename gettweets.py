@@ -6,7 +6,7 @@
 #    both with supervised and unsupervised methods.
 # 3. Conceptual metaphor analyses may use the results of our project
 #    to come up with how people understand and talk about different things.
-# App use description: We will search tweets with special hashtags
+# 4. App use description: We will search tweets with special hashtags
 #    to create data sets that will be used for machine learning
 #    in the field of cognitive linguistics.
 
@@ -28,6 +28,11 @@ from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import errorcode
 from datetime import datetime
+import gettweets_help
+
+if '-h' in sys.argv or '--help' in sys.argv:
+    gettweets_help.show_help()
+    sys.exit(0)
 
 try:
     cnx = mysql.connector.connect(user='root', password='1100',
@@ -74,7 +79,14 @@ if len(sys.argv) > 1:
     hashtag = sys.argv[1]
 else:
     hashtag = input('What\'s the hashtag you looking for? ')
-url = 'https://twitter.com/hashtag/%s?lang=fa' % hashtag
+
+if '-top' in sys.argv:
+    url = 'https://twitter.com/hashtag/%s?lang=fa' % hashtag
+else:
+    url = 'https://twitter.com/hashtag/%s?f=tweets&vertical=default&lang=fa' % hashtag
+
+print(url)
+
 headers = {
     'user-agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                    'AppleWebKit/537.36 (KHTML, like Gecko) '
