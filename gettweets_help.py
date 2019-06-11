@@ -6,6 +6,7 @@ Syntax:
     python gettweets.py [hashtag] [-top] [-h|--help]
 
 hashtag    : is the term you want to search in twitter.
+             If you use hashtag in command line it should be the first argument.
 -top       : will search the top tweets. Without this option the recent tweets will be used.
 -h, --help : will show this help page.
     

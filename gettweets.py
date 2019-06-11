@@ -60,7 +60,7 @@ headers = {
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, 'html.parser')
 tweets = soup.find_all('div', {'class': 'tweet'})
-print(f"Number of tweets fetched: {len(tweets)}")
+print(f"Number of tweets fetched: {len(tweets)}.")
 
 # saving the html of tweets in a temp file!
 f = open('t.htm', 'w', encoding='utf-8')
@@ -112,4 +112,4 @@ for tweet in tweets:
     inserted_tweets_count += 1
 
 del tdb
-print(f"Number of tweets inserted in DB: {inserted_tweets_count}")
+print(f"Number of tweets inserted in DB: {inserted_tweets_count}.")
