@@ -1,26 +1,4 @@
-# Gets some tweets with the given hashtag
-
-# 1. We are going to collect tweets with special hashtags for building
-#    a good enough data set for a linguistics project.
-# 2. We use the data set for machine learning mechanism,
-#    both with supervised and unsupervised methods.
-# 3. Conceptual metaphor analyses may use the results of our project
-#    to come up with how people understand and talk about different things.
-# 4. App use description: We will search tweets with special hashtags
-#    to create data sets that will be used for machine learning
-#    in the field of cognitive linguistics.
-
-# put twitter consumer secret keys here...
-
-# App use description: Your Use Description!!
-# API key: yourapikeyoi34u759847tkdfjhgeiroytu
-# API secret key: yourapisecretkey2398457dhfj384957uoerhhg
-# Access token: anaccesstokenfullofj2347adoi23uy489dkfjgh38945y
-# Access token secret: asecretaccesstokenfullof23894789andksdjfghaqleu
-# Dev environment label: somecodefordevenvironmentlabel
-
-# my secrets are in the following file :)
-from gettweets_secret_keys import *
+# Gets some tweets with the given hashtag (crawling method!)
 
 import sys
 import requests
