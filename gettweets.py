@@ -25,55 +25,21 @@ from gettweets_secret_keys import *
 import sys
 import requests
 from bs4 import BeautifulSoup
-import mysql.connector
-from mysql.connector import errorcode
 from datetime import datetime
 import gettweets_help
+from db import DB
 
 if '-h' in sys.argv or '--help' in sys.argv:
     gettweets_help.show_help()
     sys.exit(0)
 
 try:
-    cnx = mysql.connector.connect(user='root', password='1100',
-                                  host='127.0.0.1')
-    # auth_plugin='caching_sha2_password')
-except mysql.connector.Error as err:
-    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Something is wrong with your user name or password")
-    else:
-        print(f"Error Message from DB: {err}")
-    sys.exit()
-except:
-    print("An error happend connecting to DB.")
-    sys.exit()
+    tdb = DB()
+except Exception as err:
+    print(err)
+    sys.exit(1)
 
-cur = cnx.cursor()
-
-# IF THERE IS NO DATABASE BEFORE
-query = ("create database if not exists tweets "
-         "character set utf8 collate utf8_general_ci")
-cur.execute(query)
-cur.execute('use tweets')
-query = """\
-create table if not exists tweets (
-    id int unsigned auto_increment primary key,
-    tweet_id varchar(40),
-    user varchar(255),
-    tweet varchar(1000),
-    tweet_type int,
-    hashtag varchar(255),
-    timestamp_seconds int,
-    tweet_time datetime,
-    likes int,
-    retweets int,
-    replys int
-) character set utf8 collate utf8_general_ci
-"""
-# tweet_type is 0 for tweet and 1 if it's a reply.
-
-cur.execute(query)
-# end of creating DB and table
+tdb.check_create_db()
 
 if len(sys.argv) > 1:
     hashtag = sys.argv[1]
@@ -83,9 +49,7 @@ else:
 if '-top' in sys.argv:
     url = 'https://twitter.com/hashtag/%s?lang=fa' % hashtag
 else:
-    url = 'https://twitter.com/hashtag/%s?f=tweets&vertical=default&lang=fa' % hashtag
-
-print(url)
+    url = 'https://twitter.com/hashtag/%s?f=tweets&lang=fa' % hashtag
 
 headers = {
     'user-agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -96,27 +60,19 @@ headers = {
 r = requests.get(url, headers=headers)
 soup = BeautifulSoup(r.text, 'html.parser')
 tweets = soup.find_all('div', {'class': 'tweet'})
+print(f"Number of tweets fetched: {len(tweets)}")
+
+# saving the html of tweets in a temp file!
 f = open('t.htm', 'w', encoding='utf-8')
 f.write(str(tweets))
 f.close()
-print(f"Number of tweets fetched: {len(tweets)}")
 
-check_if_exists_query = 'select count(1) from tweets where tweet_id = %s'
-insert_tweet_query = (
-    'insert into tweets (tweet_id, user, tweet, tweet_type, hashtag, '
-    'timestamp_seconds, tweet_time, likes, retweets, replys) '
-    'values (%(tweet_id)s, %(user)s, %(tweet)s, %(tweet_type)s, %(hashtag)s, '
-    '%(timestamp_seconds)s, %(tweet_time)s, %(likes)s, %(retweets)s, %(replys)s)'
-)
 inserted_tweets_count = 0
 for tweet in tweets:
     tweet_timestamp_tag = tweet.find('a', {'class': 'tweet-timestamp'})
     tweet_id = tweet_timestamp_tag.get('data-conversation-id')
-    cur.execute(check_if_exists_query, (tweet_id,))
-    (already_exists,) = cur.fetchone()
-    if already_exists > 0:
+    if tdb.check_if_exists(tweet_id):
         continue
-    inserted_tweets_count += 1
     tweet_timestamp = int(tweet_timestamp_tag.find(
         'span', {'class': '_timestamp'}).get('data-time'))
     tweet_time = datetime.fromtimestamp(tweet_timestamp)
@@ -152,10 +108,8 @@ for tweet in tweets:
         'retweets': retweets,
         'replys': replys
     }
-    cur.execute(insert_tweet_query, tweet_data)
+    tdb.insert_tweet(tweet_data)
+    inserted_tweets_count += 1
 
-cnx.commit()
-cur.close()
-cnx.close()
-
+del tdb
 print(f"Number of tweets inserted in DB: {inserted_tweets_count}")
