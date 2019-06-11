@@ -111,5 +111,5 @@ for tweet in tweets:
     tdb.insert_tweet(tweet_data)
     inserted_tweets_count += 1
 
-#  del tdb
+del tdb
 print(f"Number of tweets inserted in DB: {inserted_tweets_count}.")
