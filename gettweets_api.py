@@ -22,16 +22,17 @@
 # my secrets are in the following file :)
 from gettweets_secret_keys import *
 
+import json
 import sys
 import tweepy
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import gettweets_help
-from db import DB
+from gettweets_api_help import *
+from db_api import DB
 
 if '-h' in sys.argv or '--help' in sys.argv:
-    gettweets_help.show_help()
+    show_help()
     sys.exit(0)
 
 try:
@@ -42,11 +43,6 @@ except Exception as err:
 
 tdb.check_create_db()
 
-if len(sys.argv) > 1:
-    hashtag = sys.argv[1]
-else:
-    hashtag = input('What\'s the hashtag you looking for? ')
-
 # if '-top' in sys.argv:
 #     url = 'https://twitter.com/hashtag/%s?lang=fa' % hashtag
 # else:
@@ -55,51 +51,50 @@ else:
 auth = tweepy.OAuthHandler(api_key, api_secret_key)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
- 
+
+if '-hg' in sys.argv:
+    hashtag = sys.argv[sys.argv.index('-hg') + 1]
+else:
+    hashtag = input('What\'s the hashtag you looking for? ')
+print(f"#{hashtag} will be searched.")
+
+number_of_tweets = 10
+if '-c' in sys.argv:
+    try:
+        number_of_tweets = int(sys.argv[sys.argv.index('-c') + 1])
+    except:
+        print("Number of tweets isn't acceptable. The default (10) will be used.")
+
+search_language = None
+if '-l' in sys.argv:
+    try:
+        search_language = sys.argv[sys.argv.index('-l') + 1]
+    except:
+        print("No suitable language is selected!")
+
+if search_language is None:
+    tweets = tweepy.Cursor(api.search, q=f"#{hashtag}").items(number_of_tweets)
+else:
+    tweets = tweepy.Cursor(api.search, q=f"#{hashtag}",
+                  lang=search_language).items(number_of_tweets)
+
 inserted_tweets_count = 0
-for tweet in tweepy.Cursor(api.search, q=f"#{hashtag}", lang="fa").items(10):
-    print(tweet)
-sys.exit()
-
-def t():
-    tweet_timestamp_tag = tweet.find('a', {'class': 'tweet-timestamp'})
-    tweet_id = tweet_timestamp_tag.get('data-conversation-id')
-    if tdb.check_if_exists(tweet_id):
-        pass #continue
-    tweet_timestamp = int(tweet_timestamp_tag.find(
-        'span', {'class': '_timestamp'}).get('data-time'))
-    tweet_time = datetime.fromtimestamp(tweet_timestamp)
-    user = tweet.find('span', {'class': 'username'}).find('b').text
-    tweet_content = tweet.find(
-        'div', {'class': 'js-tweet-text-container'}).text
-    reply = tweet.find('div', {'class': 'ReplyingToContextBelowAuthor'})
-    tweet_type = 0 if reply == None else 1
-    tweet_profile = tweet.find(
-        'div', {'class': 'ProfileTweet-actionCountList'})
-    replys = (tweet_profile.find(
-        'span', {'class': 'ProfileTweet-action--reply'})
-        .find('span', {'class': 'ProfileTweet-actionCount'})
-        .get("data-tweet-stat-count"))
-    retweets = (tweet_profile.find(
-        'span', {'class': 'ProfileTweet-action--retweet'})
-        .find('span', {'class': 'ProfileTweet-actionCount'})
-        .get("data-tweet-stat-count"))
-    likes = (tweet_profile.find(
-        'span', {'class': 'ProfileTweet-action--favorite'})
-        .find('span', {'class': 'ProfileTweet-actionCount'})
-        .get("data-tweet-stat-count"))
-
+for tweet in tweets:
+    # print("\n==================================\n")
+    # print(json.dumps(tweet._json))
+    if tdb.check_if_exists(tweet._json['id_str']):
+        continue
     tweet_data = {
-        'tweet_id': tweet_id,
-        'user': user,
-        'tweet': tweet_content,
-        'tweet_type': tweet_type,
-        'hashtag': hashtag,
-        'timestamp_seconds': tweet_timestamp,
-        'tweet_time': tweet_time,
-        'likes': likes,
-        'retweets': retweets,
-        'replys': replys
+        'tweet_id': tweet._json['id_str'],
+        'username': tweet._json['user']['name'],
+        'user_screen_name': tweet._json['user']['screen_name'],
+        'user_id': tweet._json['user']['id_str'],
+        'tweet': tweet._json['text'],
+        'location': tweet._json['user']['location'],
+        'searched_hashtag': hashtag,
+        'created_at': tweet._json['created_at'],
+        'favorite_count': tweet._json['favorite_count'],
+        'retweet_count': tweet._json['retweet_count'],
     }
     tdb.insert_tweet(tweet_data)
     inserted_tweets_count += 1
