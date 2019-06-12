@@ -34,7 +34,7 @@ class DB:
 
         # IF THERE IS NO DATABASE BEFORE
         query = ("create database if not exists tweets "
-                 "character set utf8 collate utf8_general_ci")
+                 "character set utf8mb4 collate utf8mb4_general_ci")
         cur.execute(query)
         cur.execute('use tweets')
         query = """
@@ -50,7 +50,7 @@ class DB:
             created_at varchar(50),
             retweet_count int,
             favorite_count int
-        ) character set utf8 collate utf8_general_ci
+        ) character set utf8mb4 collate utf8mb4_general_ci
         """
         cur.execute(query)
         # end of creating DB and table

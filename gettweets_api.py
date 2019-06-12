@@ -22,7 +22,6 @@
 # my secrets are in the following file :)
 from gettweets_secret_keys import *
 
-import json
 import sys
 import tweepy
 import requests
@@ -72,6 +71,7 @@ if '-l' in sys.argv:
     except:
         print("No suitable language is selected!")
 
+print("Gettings tweets...\n")
 if search_language is None:
     tweets = tweepy.Cursor(api.search, q=f"#{hashtag}").items(number_of_tweets)
 else:
@@ -80,9 +80,11 @@ else:
 
 inserted_tweets_count = 0
 for tweet in tweets:
+    print("Checking a tweet...")
     # print("\n==================================\n")
     # print(json.dumps(tweet._json))
     if tdb.check_if_exists(tweet._json['id_str']):
+        print("It was duplicate.")
         continue
     tweet_data = {
         'tweet_id': tweet._json['id_str'],
@@ -96,8 +98,9 @@ for tweet in tweets:
         'favorite_count': tweet._json['favorite_count'],
         'retweet_count': tweet._json['retweet_count'],
     }
+    print(f"Tweet No. {inserted_tweets_count} is being saved...")
     tdb.insert_tweet(tweet_data)
     inserted_tweets_count += 1
 
 del tdb
-print(f"Number of tweets inserted in DB: {inserted_tweets_count}.")
+print(f"\nNumber of tweets inserted in DB: {inserted_tweets_count}.\n")
