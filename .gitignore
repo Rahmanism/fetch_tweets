@@ -1,5 +1,6 @@
 gettweets_secret_keys.py
 t.htm
+tweets.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
