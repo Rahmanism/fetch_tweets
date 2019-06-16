@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import mysql.connector
 from mysql.connector import errorcode
 
@@ -17,7 +19,7 @@ class DB:
     def db_connect(self):
         try:
             cnx = mysql.connector.connect(user='root', password='1100',
-                                          host='127.0.0.1')
+                                          host='127.0.0.1', use_unicode=True)
             # auth_plugin='caching_sha2_password')
             return cnx
         except mysql.connector.Error as err:
@@ -30,7 +32,7 @@ class DB:
             raise Exception("An error happend connecting to DB.")
 
     def check_create_db(self):
-        cur = self.cnx.cursor()
+        cur = self.cur
 
         # IF THERE IS NO DATABASE BEFORE
         query = ("create database if not exists tweets "
@@ -80,3 +82,12 @@ class DB:
         )
         self.cur.execute(insert_tweet_query, tweet_data)
         self.cnx.commit()
+
+    def get_all_tweets(self):
+        """
+        Returns all the tweets saved in DB.
+        """
+        self.cur.execute('use tweets')
+        get_query = "select * from tweets_api limit"
+        self.cur.execute(get_query)
+        return self.cur.fetchall()
