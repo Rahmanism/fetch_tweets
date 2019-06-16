@@ -29,9 +29,19 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from gettweets_api_help import *
 from db_api import DB
+from csv_api import CSV
 
 if '-h' in sys.argv or '--help' in sys.argv:
     show_help()
+    sys.exit(0)
+
+if '-x' in sys.argv:
+    try:
+        csv_filename = sys.argv[sys.argv.index('-x') + 1]
+    except:
+        csv_filename = None
+    csv = CSV(csv_filename)
+    csv.export()
     sys.exit(0)
 
 try:
