@@ -83,7 +83,7 @@ class DB:
         self.cur.execute(insert_tweet_query, tweet_data)
         self.cnx.commit()
 
-    def get_all_tweets(self, limit = None):
+    def get_all_tweets(self, limit=None):
         """
         Returns all the tweets saved in DB.
         """

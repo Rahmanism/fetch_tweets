@@ -26,9 +26,6 @@ from gettweets_secret_keys import *
 
 import sys
 import tweepy
-import requests
-from bs4 import BeautifulSoup
-from datetime import datetime
 from gettweets_api_help import *
 from db_api import DB
 from csv_api import CSV
