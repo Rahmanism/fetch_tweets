@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Gets some tweets with the given hashtag
 
 # 1. We are going to collect tweets with special hashtags for building
@@ -40,8 +42,16 @@ if '-x' in sys.argv:
         csv_filename = sys.argv[sys.argv.index('-x') + 1]
     except:
         csv_filename = None
+    
+    limit = None
+    if '-xc' in sys.argv:
+        try:
+            limit = int(sys.argv[sys.argv.index('-xc') + 1])
+        except:
+            print('No suitable limit count is prompted!')
+            sys.exit(1)
     csv = CSV(csv_filename)
-    csv.export()
+    csv.export(limit = limit)
     sys.exit(0)
 
 try:

@@ -17,7 +17,7 @@ class CSV:
             self.csv_filename = filename.strip()
         print(self.csv_filename)
 
-    def export(self, filename=None):
+    def export(self, filename=None, limit=None):
         if filename is not None:
             self.csv_filename = filename.strip()
 
@@ -28,16 +28,16 @@ class CSV:
             sys.exit(1)
 
         # Open/Create a file to append data
-        csv_file = open(self.csv_filename, 'w')
+        csv_file = open(self.csv_filename, 'w', encoding='utf-8')
         # Use csv Writer
         csv_writer = csv.writer(csv_file)
 
-        tweets = tdb.get_all_tweets()
+        tweets = tdb.get_all_tweets(limit)
         csv_writer.writerow(['id', 'tweet_id', 'username', 'user_screen_name',
-                            'user_id', 'tweet', 'location', 'searched_hashtag',
-                            'created_at', 'retweet_count', 'favorite_count'])
+                             'user_id', 'tweet', 'location', 'searched_hashtag',
+                             'created_at', 'retweet_count', 'favorite_count'])
         for tweet in tweets:
             print(tweet)
             print("------------------------------------")
-            csv_writer.writerow((t.encode('utf-8') if type(t) is str else t for t in tweet))
+            csv_writer.writerow(tweet)
         csv_file.close()

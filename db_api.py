@@ -83,11 +83,14 @@ class DB:
         self.cur.execute(insert_tweet_query, tweet_data)
         self.cnx.commit()
 
-    def get_all_tweets(self):
+    def get_all_tweets(self, limit = None):
         """
         Returns all the tweets saved in DB.
         """
         self.cur.execute('use tweets')
-        get_query = "select * from tweets_api limit"
+        if limit is None:
+            get_query = "select * from tweets_api"
+        else:
+            get_query = f"select * from tweets_api order by id desc limit {limit}"
         self.cur.execute(get_query)
         return self.cur.fetchall()
