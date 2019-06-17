@@ -57,7 +57,6 @@ class DB:
         cur.execute(query)
         # end of creating DB and table
         self.cnx.commit()
-        cur.close()
 
     def check_if_exists(self, tweet_id):
         """

@@ -3,7 +3,7 @@ def show_help():
 This app will search for a hashtag and saves the tweets in a MySQL database.
 
 Syntax:
-    python gettweets.py [hashtag] [-top] [-h|--help]
+    python gettweets_api.py [hashtag] [-top] [-h|--help]
 
 hashtag    : is the term you want to search in twitter.
              If you use hashtag in command line it should be the first argument.

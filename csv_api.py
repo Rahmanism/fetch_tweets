@@ -28,7 +28,7 @@ class CSV:
             sys.exit(1)
 
         # Open/Create a file to append data
-        csv_file = open(self.csv_filename, 'w', encoding='utf-8')
+        csv_file = open(self.csv_filename, 'w', encoding='utf-8', newline='')
         # Use csv Writer
         csv_writer = csv.writer(csv_file)
 
