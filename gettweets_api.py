@@ -37,6 +37,8 @@ if '-h' in sys.argv or '--help' in sys.argv:
 if '-x' in sys.argv:
     try:
         csv_filename = sys.argv[sys.argv.index('-x') + 1]
+        if csv_filename[0] == '-':
+            csv_filename = None
     except:
         csv_filename = None
     
