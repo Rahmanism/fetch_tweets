@@ -45,7 +45,10 @@ if '-x' in sys.argv:
     limit = None
     if '-xc' in sys.argv:
         try:
-            limit = int(sys.argv[sys.argv.index('-xc') + 1])
+            if sys.argv[sys.argv.index('-xc') + 1] == 'last':
+                limit = 0
+            else:
+                limit = int(sys.argv[sys.argv.index('-xc') + 1])
         except:
             print('No suitable limit count is prompted!')
             sys.exit(1)

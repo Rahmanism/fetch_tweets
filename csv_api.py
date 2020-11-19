@@ -11,6 +11,7 @@ class CSV:
     def __init__(self, filename):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         defult_filename = f"{dir_path}/tweets.csv"
+        self.last_tweet_id_filename = f"{dir_path}/last_tweet_id"
         if filename is None:
             self.csv_filename = defult_filename
         else:
@@ -31,8 +32,19 @@ class CSV:
         csv_file = open(self.csv_filename, 'w', encoding='utf-8', newline='')
         # Use csv Writer
         csv_writer = csv.writer(csv_file)
-
-        tweets = tdb.get_all_tweets(limit)
+        
+        last_tweet_id = 0
+        if limit == 0:
+            try:
+                last_tweet_id_file = open(self.last_tweet_id_filename,
+                                        'r', encoding='utf-8')
+                last_tweet_id = int(last_tweet_id_file.read().strip())
+                last_tweet_id_file.close()
+            except:
+                last_tweet_id = 0
+        
+        tweets = tdb.get_all_tweets(limit, last_tweet_id)
+        
         csv_writer.writerow(['id', 'tweet_id', 'username', 'user_screen_name',
                              'user_id', 'tweet', 'location', 'searched_hashtag',
                              'created_at', 'retweet_count', 'favorite_count'])
@@ -41,3 +53,7 @@ class CSV:
             print("------------------------------------")
             csv_writer.writerow(tweet)
         csv_file.close()
+        
+        last_tweet_id_file = open(self.last_tweet_id_filename, 'w', encoding='utf-8', newline='')
+        last_tweet_id_file.write(str(tweets[0][0]))
+        last_tweet_id_file.close()
