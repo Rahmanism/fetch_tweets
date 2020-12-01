@@ -52,8 +52,11 @@ if '-x' in sys.argv:
         except:
             print('No suitable limit count is prompted!')
             sys.exit(1)
+    full = '-full' in sys.argv
     csv = CSV(csv_filename)
-    csv.export(limit = limit)
+    if '-hg' in sys.argv:
+        hashtag = sys.argv[sys.argv.index('-hg') + 1]
+    csv.export(limit = limit, full = full, hashtag = hashtag)
     sys.exit(0)
 
 try:
