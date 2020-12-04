@@ -5,12 +5,13 @@ set de=%d%_error
 run_fetch.cmd > %d% 2>%de%
 
 rem if %errorlevel% == 0 (
-  
-copy life.csv C:\meta4app\src\life.txt
-copy history.csv C:\meta4app\src\history.txt
-copy culture.csv C:\meta4app\src\culture.csv
+
+copy life.csv C:\meta4app\src\life.txt -y
+copy history.csv C:\meta4app\src\history.txt -y
+copy culture.csv C:\meta4app\src\culture.csv -y
 
 cd /d C:\meta4app\app\consoleapp\bin\Release\netcoreapp3.1\
-.\ConsoleApp.exe
-  
+.\ConsoleApp.exe  
+curl http://localhost/
+
 rem )
