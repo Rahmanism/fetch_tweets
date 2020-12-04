@@ -59,9 +59,9 @@ class CSV:
         else:
             csv_writer.writerow(['tweet'])
             for tweet in tweets:
-                print(tweet)
+                print(tweet[5])
                 print("------------------------------------")
-                csv_writer.writerow(tweet[5])
+                csv_writer.writerow([tweet[5]])
         csv_file.close()
         
         last_tweet_id_file = open(self.last_tweet_id_filename, 'w', encoding='utf-8', newline='')
