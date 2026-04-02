@@ -1,7 +1,7 @@
 beautifulsoup4==4.7.1
 mysql-connector-python==8.0.16
 oauthlib==3.0.1
-requests==2.22.0
+requests==2.31.0
 requests-oauthlib==1.2.0
 tweepy==3.7.0
 webencodings==0.5.1
